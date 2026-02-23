@@ -1,29 +1,21 @@
 "use client";
 
-import { useState, type ChangeEvent, type FormEvent } from "react";
-
-type IncrementResponse = {
-  result: number;
-};
-
-type Status = "idle" | "loading" | "error";
+import { useState, type FormEvent } from "react";
 
 export default function Home() {
   const [value, setValue] = useState("4");
-  const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("Ready.");
+  const [status, setStatus] =
+    useState<"idle" | "loading" | "error">("idle");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const numericValue = Number(value);
     if (Number.isNaN(numericValue)) {
       setStatus("error");
-      setMessage("Enter a valid number to increment.");
       return;
     }
 
     setStatus("loading");
-    setMessage("");
     try {
       const response = await fetch("/py/increment", {
         method: "POST",
@@ -34,53 +26,52 @@ export default function Home() {
       });
 
       if (!response.ok) {
-        const message = await response.text();
-        throw new Error(message || "Request failed.");
+        throw new Error("Request failed.");
       }
 
-      const data: IncrementResponse = await response.json();
+      const data = (await response.json()) as { result: number };
       setValue(String(data.result));
       setStatus("idle");
-      setMessage(`Result: ${data.result}`);
-    } catch (err) {
+    } catch {
       setStatus("error");
-      setMessage(err instanceof Error ? err.message : "Something went wrong.");
     }
   };
+
+  const statusText =
+    status === "loading"
+      ? "Calling service..."
+      : status === "error"
+        ? "Request failed."
+        : "Ready.";
 
   return (
     <main className="page">
       <section className="card">
-        <p className="eyebrow">Next.js + FastAPI</p>
         <h1>Counter</h1>
-        <p className="lede">
-          Enter a number, then the API response becomes the next value.
-        </p>
+        <p className="lede">Enter a number and increment it via the API.</p>
 
         <form className="counter-form" onSubmit={handleSubmit}>
-          <label className="field">
-            <span>Number</span>
-            <input
-              type="number"
-              inputMode="decimal"
-              value={value}
-              onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                setValue(event.target.value)
+          <input
+            type="number"
+            inputMode="decimal"
+            value={value}
+            onChange={(event) => {
+              setValue(event.currentTarget.value);
+              if (status === "error") {
+                setStatus("idle");
               }
-              placeholder="e.g. 42"
-              step="1"
-            />
-          </label>
+            }}
+            placeholder="e.g. 42"
+            aria-label="Number"
+            step="1"
+          />
           <button type="submit" disabled={status === "loading"}>
             {status === "loading" ? "Calling service..." : "Increment"}
           </button>
         </form>
 
-        <p
-          className={`status${status === "error" ? " error" : ""}`}
-          aria-live="polite"
-        >
-          {status === "loading" ? "Calling service..." : message || "Ready."}
+        <p className={`status${status === "error" ? " error" : ""}`}>
+          {statusText}
         </p>
       </section>
     </main>
