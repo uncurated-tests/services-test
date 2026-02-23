@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import APIRouter, FastAPI
 from pydantic import BaseModel
 
 
@@ -11,8 +11,13 @@ class IncrementResponse(BaseModel):
 
 
 app = FastAPI()
+router = APIRouter()
 
 
-@app.post("/increment", response_model=IncrementResponse)
+@router.post("/increment", response_model=IncrementResponse)
 def increment(payload: IncrementRequest) -> IncrementResponse:
     return IncrementResponse(result=payload.value + 1)
+
+
+app.include_router(router)
+app.include_router(router, prefix="/api/py")
