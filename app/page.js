@@ -21,7 +21,7 @@ export default function Home() {
 
     setIsLoading(true);
     try {
-      const response = await fetch("/api/py/increment", {
+      const response = await fetch("/py/increment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -88,7 +88,7 @@ export default function Home() {
         <div className="tile">
           <p className="tile-title">Service routing</p>
           <p className="tile-body">Frontend: /</p>
-          <p className="tile-body">Backend: /api/py/increment</p>
+          <p className="tile-body">Backend: /py/increment</p>
         </div>
         <div className="tile accent">
           <p className="tile-title">Payload</p>

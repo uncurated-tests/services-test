@@ -20,4 +20,4 @@ def increment(payload: IncrementRequest) -> IncrementResponse:
 
 
 app.include_router(router)
-app.include_router(router, prefix="/api/py")
+app.include_router(router, prefix="/py")
