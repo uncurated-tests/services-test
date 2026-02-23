@@ -9,7 +9,7 @@
     },
     "api": {
       "framework": "fastapi",
-      "entrypoint": "backend/not_main.py",
+      "entrypoint": "backend/main.py",
       "routePrefix": "/py"
     }
   }
