@@ -4,6 +4,7 @@
   "experimentalServices": {
     "web": {
       "framework": "nextjs",
+      "workspace": "frontend",
       "routePrefix": "/"
     },
     "api": {
