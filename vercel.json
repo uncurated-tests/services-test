@@ -6,7 +6,7 @@
     },
     "api": {
       "framework": "fastapi",
-      "workspace": "backend",
+      "entrypoint": "backend/main.py",
       "routePrefix": "/api/py"
     }
   }
