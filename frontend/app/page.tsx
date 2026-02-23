@@ -17,7 +17,7 @@ export default function Home() {
 
     setStatus("loading");
     try {
-      const response = await fetch("/py/increment", {
+      const response = await fetch("/_/backend/increment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
