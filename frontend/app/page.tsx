@@ -6,24 +6,24 @@ type IncrementResponse = {
   result: number;
 };
 
+type Status = "idle" | "loading" | "error";
+
 export default function Home() {
   const [value, setValue] = useState("4");
-  const [result, setResult] = useState<number | null>(null);
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [status, setStatus] = useState<Status>("idle");
+  const [message, setMessage] = useState("Ready.");
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError("");
-    setResult(null);
-
     const numericValue = Number(value);
     if (Number.isNaN(numericValue)) {
-      setError("Enter a valid number to increment.");
+      setStatus("error");
+      setMessage("Enter a valid number to increment.");
       return;
     }
 
-    setIsLoading(true);
+    setStatus("loading");
+    setMessage("");
     try {
       const response = await fetch("/py/increment", {
         method: "POST",
@@ -39,28 +39,27 @@ export default function Home() {
       }
 
       const data: IncrementResponse = await response.json();
-      setResult(data.result);
       setValue(String(data.result));
+      setStatus("idle");
+      setMessage(`Result: ${data.result}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-    } finally {
-      setIsLoading(false);
+      setStatus("error");
+      setMessage(err instanceof Error ? err.message : "Something went wrong.");
     }
   };
 
   return (
     <main className="page">
       <section className="card">
-        <div className="badge">Next.js + FastAPI</div>
-        <h1>Counter Service</h1>
+        <p className="eyebrow">Next.js + FastAPI</p>
+        <h1>Counter</h1>
         <p className="lede">
-          Send a number to the backend service and get <span>N + 1</span> in
-          return.
+          Enter a number, then the API response becomes the next value.
         </p>
 
         <form className="counter-form" onSubmit={handleSubmit}>
           <label className="field">
-            <span>Number to increment</span>
+            <span>Number</span>
             <input
               type="number"
               inputMode="decimal"
@@ -72,40 +71,18 @@ export default function Home() {
               step="1"
             />
           </label>
-          <button type="submit" disabled={isLoading}>
-            {isLoading ? "Calling service..." : "Increment"}
+          <button type="submit" disabled={status === "loading"}>
+            {status === "loading" ? "Calling service..." : "Increment"}
           </button>
         </form>
 
-        <div className="result" aria-live="polite">
-          {error ? (
-            <p className="error">{error}</p>
-          ) : result !== null ? (
-            <div>
-              <p className="result-label">Response</p>
-              <p className="result-value">{result}</p>
-            </div>
-          ) : (
-            <p className="muted">Waiting for your first request.</p>
-          )}
-        </div>
+        <p
+          className={`status${status === "error" ? " error" : ""}`}
+          aria-live="polite"
+        >
+          {status === "loading" ? "Calling service..." : message || "Ready."}
+        </p>
       </section>
-
-      <aside className="stack">
-        <div className="tile">
-          <p className="tile-title">Service routing</p>
-          <p className="tile-body">Frontend: /</p>
-          <p className="tile-body">Backend: /py/increment</p>
-        </div>
-        <div className="tile accent">
-          <p className="tile-title">Payload</p>
-          <pre>{`{\n  "value": ${value || 0}\n}`}</pre>
-        </div>
-        <div className="tile">
-          <p className="tile-title">Response shape</p>
-          <pre>{`{\n  "result": N + 1\n}`}</pre>
-        </div>
-      </aside>
     </main>
   );
 }
