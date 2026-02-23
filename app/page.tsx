@@ -1,14 +1,18 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ChangeEvent, type FormEvent } from "react";
+
+type IncrementResponse = {
+  result: number;
+};
 
 export default function Home() {
   const [value, setValue] = useState("4");
-  const [result, setResult] = useState(null);
+  const [result, setResult] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError("");
     setResult(null);
@@ -34,8 +38,9 @@ export default function Home() {
         throw new Error(message || "Request failed.");
       }
 
-      const data = await response.json();
+      const data: IncrementResponse = await response.json();
       setResult(data.result);
+      setValue(String(data.result));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong.");
     } finally {
@@ -60,7 +65,9 @@ export default function Home() {
               type="number"
               inputMode="decimal"
               value={value}
-              onChange={(event) => setValue(event.target.value)}
+              onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                setValue(event.target.value)
+              }
               placeholder="e.g. 42"
               step="1"
             />

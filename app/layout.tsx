@@ -1,3 +1,6 @@
+import type { Metadata } from "next";
+import type { ReactNode } from "react";
+
 import "./globals.css";
 import { Sora } from "next/font/google";
 
@@ -7,12 +10,16 @@ const sora = Sora({
   display: "swap",
 });
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "Counter +1",
   description: "Send a number to FastAPI and get N + 1.",
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html lang="en">
       <body className={sora.className}>{children}</body>
