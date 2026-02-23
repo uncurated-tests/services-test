@@ -1,0 +1,14 @@
+{
+  "experimentalServices": {
+    "web": {
+      "framework": "nextjs",
+      "workspace": ".",
+      "routePrefix": "/"
+    },
+    "api": {
+      "framework": "fastapi",
+      "workspace": "backend",
+      "routePrefix": "/api/py"
+    }
+  }
+}
