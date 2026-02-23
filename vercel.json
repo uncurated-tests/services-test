@@ -2,7 +2,6 @@
   "experimentalServices": {
     "web": {
       "framework": "nextjs",
-      "workspace": ".",
       "routePrefix": "/"
     },
     "api": {
